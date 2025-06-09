@@ -66,27 +66,18 @@ func (r *eventRepositoryDB) FetchEventById(id int) (*models.Event,error){
 func (r *eventRepositoryDB) UpdateEventById(name string,description string,id int) error{
 
 
-	previous_data,_ := r.FetchEventById(id)
+	updateData,_ := r.FetchEventById(id)
 	stmt := "UPDATE events SET name = $1,description = $2 WHERE id = $3"
-	var event_name,event_description string
 	
-	if name == ""{
-		event_name = previous_data.Name
-		if description == ""{
-			event_description = previous_data.Description
-		}else{
-			event_description = description
-		}
-	}else{
-		event_name = name
-		if description == ""{
-			event_description = previous_data.Description
-		}else{
-			event_description = description
-		}
+	if name != ""{
+		updateData.Name = name
+	}
+
+	if description != ""{
+		updateData.Description = description
 	}
 		
-	_,err := r.db.Exec(stmt,event_name,event_description,id)
+	_,err := r.db.Exec(stmt,updateData.Name,updateData.Description,id)
 
 	if err != nil{
 		return err

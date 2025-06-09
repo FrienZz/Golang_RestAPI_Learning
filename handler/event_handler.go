@@ -87,7 +87,7 @@ func (h *eventHandler) UpdateEvent(c *gin.Context){
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message" : "Event created successfully!"})
+	c.JSON(http.StatusCreated, gin.H{"message" : "Event updated successfully!"})
 }
 
 func (h *eventHandler) DeleteEvent(c *gin.Context){
