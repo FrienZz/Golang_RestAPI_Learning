@@ -32,7 +32,7 @@ func (h *eventHandler) CreateEvent(c *gin.Context){
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message" : "Event created successfully!"})
+	c.JSON(http.StatusCreated, gin.H{"message" : "Event has been successfully created!"})
 }
 
 func (h *eventHandler) GetAllEvent(c *gin.Context){
@@ -87,7 +87,7 @@ func (h *eventHandler) UpdateEvent(c *gin.Context){
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message" : "Event updated successfully!"})
+	c.JSON(http.StatusCreated, gin.H{"message" : "Event has been successfully updated!"})
 }
 
 func (h *eventHandler) DeleteEvent(c *gin.Context){
@@ -105,5 +105,5 @@ func (h *eventHandler) DeleteEvent(c *gin.Context){
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message" : "Event deleted succesfully!"})
+	c.JSON(http.StatusOK, gin.H{"message" : "Event has been successfully deleted!"})
 }

@@ -4,9 +4,7 @@ import (
 	"log"
 
 	"github.com/FrienZz/Golang_RestAPI_Learning/db"
-	"github.com/FrienZz/Golang_RestAPI_Learning/handler"
-	"github.com/FrienZz/Golang_RestAPI_Learning/repository"
-	"github.com/FrienZz/Golang_RestAPI_Learning/service"
+	"github.com/FrienZz/Golang_RestAPI_Learning/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -14,24 +12,19 @@ import (
 
 func main() {
 
-  err := godotenv.Load()
-  if err != nil {
-    log.Fatal("Error loading .env file")
-  }
+  	err := godotenv.Load()
+  	if err != nil {
+    	log.Fatal("Error loading .env file")
+  	}
  
-  db := db.InitDB()
-  defer db.Close()
+  	db := db.InitDB()
+  	defer db.Close()
 
-  repo:= repository.NewEventRepositoryDB(db)
-  service := service.NewEventService(repo)
-  httpHandler := handler.NewEventHandler(service)
+  	server := gin.Default()
 	
-	router := gin.Default()
-
-	router.GET("/events", httpHandler.GetAllEvent)
-	router.GET("/events/:id", httpHandler.GetEvent)
-	router.POST("/events", httpHandler.CreateEvent)
-	router.PATCH("/events/:id", httpHandler.UpdateEvent)
-	router.DELETE("/events/:id", httpHandler.DeleteEvent)
-	router.Run(":8080")
+	routes.EventRoutes(db,server)
+	routes.UserRoutes(db,server)
+	
+	server.Run(":8080")
+	
 }
