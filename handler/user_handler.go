@@ -20,15 +20,16 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	var newUser models.User
 
 	err := c.BindJSON(&newUser)
+	
 	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{"message" : err.Error()})
+		HandleError(c,err)
 		return
 	}
 	
 	err = h.service.RegisterUser(newUser.Email,newUser.Password)
 
 	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{"message" : err.Error()})
+		HandleError(c,err)
 		return
 	}
 
@@ -38,19 +39,20 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 func (h *userHandler) LoginUser(c *gin.Context) {
 
 	var loginUser models.User
-
+	
 	err := c.BindJSON(&loginUser)
+	
 	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{"message" : err.Error()})
+		HandleError(c,err)
 		return
 	}
 	
 	err = h.service.LoginUser(loginUser.Email,loginUser.Password)
 
 	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{"message" : err.Error()})
+		HandleError(c,err)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message" : "Successfully login"})
+	c.JSON(http.StatusOK, gin.H{"message" : "Successfully login"})
 }

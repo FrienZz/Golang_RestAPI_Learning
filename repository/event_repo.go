@@ -55,8 +55,7 @@ func (r *eventRepositoryDB) FetchEventById(id int) (*models.Event,error){
 
 	var event models.Event 
 	err := row.Scan(&event.Event_id,&event.Name,&event.Description,&event.Created_at,&event.User_id)
-	
-	if err != nil{
+	if err != nil {
 		return nil,err
 	}
 
@@ -66,7 +65,12 @@ func (r *eventRepositoryDB) FetchEventById(id int) (*models.Event,error){
 func (r *eventRepositoryDB) UpdateEventById(name string,description string,id int) error{
 
 
-	updateData,_ := r.FetchEventById(id)
+	updateData,err := r.FetchEventById(id)
+
+	if err != nil{
+		return err
+	}
+
 	stmt := "UPDATE events SET name = $1,description = $2 WHERE id = $3"
 	
 	if name != ""{
@@ -76,8 +80,8 @@ func (r *eventRepositoryDB) UpdateEventById(name string,description string,id in
 	if description != ""{
 		updateData.Description = description
 	}
-		
-	_,err := r.db.Exec(stmt,updateData.Name,updateData.Description,id)
+	
+	_,err = r.db.Exec(stmt,updateData.Name,updateData.Description,id)
 
 	if err != nil{
 		return err
@@ -102,7 +106,7 @@ func (r *eventRepositoryDB) DeleteEventById(id int) (error){
 	}
 
 	if rowAffected == 0{
-		return errors.New("event id does not exist")
+		return errors.New("id does not exist")
 	}
 
 	return nil
