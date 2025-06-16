@@ -1,6 +1,6 @@
-package repository
+package port
 
-import "github.com/FrienZz/Golang_RestAPI_Learning/models"
+import "github.com/FrienZz/Golang_RestAPI_Learning/internal/models"
 
 //Secondary Port
 type EventRepository interface{

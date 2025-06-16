@@ -6,15 +6,15 @@ import (
 	"strconv"
 
 	"github.com/FrienZz/Golang_RestAPI_Learning/httphandle"
-	"github.com/FrienZz/Golang_RestAPI_Learning/models"
-	"github.com/FrienZz/Golang_RestAPI_Learning/repository"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/models"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/port"
 )
 
 type eventService struct {
-	eventRepo repository.EventRepository
+	eventRepo port.EventRepository
 }
 //Core logic
-func NewEventService(eventRepo repository.EventRepository) EventService{
+func NewEventService(eventRepo port.EventRepository) port.EventService{
 	return &eventService{eventRepo: eventRepo}
 }
 

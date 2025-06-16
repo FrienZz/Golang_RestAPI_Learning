@@ -4,16 +4,17 @@ import (
 	"regexp"
 
 	"github.com/FrienZz/Golang_RestAPI_Learning/httphandle"
-	"github.com/FrienZz/Golang_RestAPI_Learning/repository"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/port"
+	"github.com/FrienZz/Golang_RestAPI_Learning/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type userService struct {
-	userRepo repository.UserRepository
+	userRepo port.UserRepository
 }
 
 // Core logic
-func NewUserService(userRepo repository.UserRepository) UserService {
+func NewUserService(userRepo port.UserRepository) port.UserService {
 	return &userService{userRepo: userRepo}
 }
 
@@ -46,21 +47,27 @@ func (s *userService) RegisterUser(email string,password string) error {
 	
 }
 
-func (s *userService) LoginUser(email string,password string) error {
+func (s *userService) LoginUser(email string,password string) (string,error) {
 
 
 	hashPassword,err := s.userRepo.LoginUser(email,password)
 
 	if err != nil{
 
-		return err
+		return "",err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashPassword),[]byte(password))
 
 	if err != nil{
-		return httphandle.NotFound("password is incorrect. Please try again")
+		return "",httphandle.NotFound("password is incorrect. Please try again")
 	}
 
-	return nil
+	token,err := utils.GenerateToken(email)
+
+	if err != nil{
+		return "",err
+	}
+
+	return token,nil
 }

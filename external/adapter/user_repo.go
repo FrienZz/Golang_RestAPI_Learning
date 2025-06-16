@@ -1,7 +1,9 @@
-package repository
+package adapter
 
 import (
 	"database/sql"
+
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/port"
 )
 
 type userRepositoryDB struct {
@@ -9,7 +11,7 @@ type userRepositoryDB struct {
 }
 
 // Adapter Database
-func NewUserRepositoryDB(db *sql.DB) UserRepository {
+func NewUserRepositoryDB(db *sql.DB) port.UserRepository {
 	return &userRepositoryDB{db: db}
 }
 

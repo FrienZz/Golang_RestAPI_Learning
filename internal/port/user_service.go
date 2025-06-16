@@ -1,6 +1,6 @@
-package repository
+package port
 
-type UserRepository interface {
+type UserService interface {
 	RegisterUser(string, string) error
 	LoginUser(string, string) (string, error)
 }

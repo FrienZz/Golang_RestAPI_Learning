@@ -3,20 +3,21 @@ package handler
 import (
 	"net/http"
 
-	"github.com/FrienZz/Golang_RestAPI_Learning/models"
-	"github.com/FrienZz/Golang_RestAPI_Learning/service"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/models"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/port"
 	"github.com/gin-gonic/gin"
 )
 
 type eventHandler struct {
-	service service.EventService
+	service port.EventService
 }
 
-func NewEventHandler(service service.EventService) *eventHandler{
+func NewEventHandler(service port.EventService) *eventHandler{
 	return &eventHandler{service : service}
 }
 
 func (h *eventHandler) CreateEvent(c *gin.Context){
+
 	var newEvent models.Event
 	err := c.BindJSON(&newEvent)
 	if err != nil{
@@ -35,6 +36,7 @@ func (h *eventHandler) CreateEvent(c *gin.Context){
 }
 
 func (h *eventHandler) GetAllEvent(c *gin.Context){
+
 	result,err := h.service.GetAllEvent()
 
 	if err != nil{

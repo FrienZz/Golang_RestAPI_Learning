@@ -3,15 +3,15 @@ package routes
 import (
 	"database/sql"
 
-	"github.com/FrienZz/Golang_RestAPI_Learning/handler"
-	"github.com/FrienZz/Golang_RestAPI_Learning/repository"
-	"github.com/FrienZz/Golang_RestAPI_Learning/service"
+	"github.com/FrienZz/Golang_RestAPI_Learning/external/adapter"
+	"github.com/FrienZz/Golang_RestAPI_Learning/external/handler"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 func UserRoutes(db *sql.DB,server *gin.Engine){
 	
-	user_repo := repository.NewUserRepositoryDB(db)
+	user_repo := adapter.NewUserRepositoryDB(db)
 	user_service := service.NewUserService(user_repo)
 	user_httpHandler := handler.NewUserHandler(user_service)
 		

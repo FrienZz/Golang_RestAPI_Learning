@@ -1,10 +1,11 @@
-package repository
+package adapter
 
 import (
 	"database/sql"
 	"errors"
 
-	"github.com/FrienZz/Golang_RestAPI_Learning/models"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/models"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/port"
 )
 
 type eventRepositoryDB struct {
@@ -12,7 +13,7 @@ type eventRepositoryDB struct {
 }
 
 //Adapter Database 
-func NewEventRepositoryDB(db *sql.DB) EventRepository{
+func NewEventRepositoryDB(db *sql.DB) port.EventRepository{
 	return &eventRepositoryDB{db : db}
 }
 
@@ -23,7 +24,7 @@ func (r *eventRepositoryDB) AddEvent(newEvent models.Event) (error){
 	if err != nil{
 		return err
 	}
-
+	
 	return nil
 }
 

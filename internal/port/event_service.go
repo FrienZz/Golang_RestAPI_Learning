@@ -1,7 +1,7 @@
-package service
+package port
 
 import (
-	"github.com/FrienZz/Golang_RestAPI_Learning/models"
+	"github.com/FrienZz/Golang_RestAPI_Learning/internal/models"
 )
 
 type EventService interface {
