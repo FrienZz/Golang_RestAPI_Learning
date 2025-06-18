@@ -29,9 +29,9 @@ func (s *eventService) CreateEvent(newEvent models.Event) error {
 	return nil
 }
 
-func (s *eventService) GetAllEvent() ([]models.Event, error) {
+func (s *eventService) GetAllEvents() ([]models.Event, error) {
 
-	events,err := s.eventRepo.FetchAllEvent()
+	events,err := s.eventRepo.FetchAllEvents()
 
 	if err != nil{
 		return nil,err
@@ -51,11 +51,18 @@ func (s *eventService) GetEvent(id string) (*models.Event, error) {
 		return nil,httphandle.BadRequest("id is not a number")
 	}
 	
-	eventId,_ := strconv.Atoi(id)
+	eventId,err := strconv.Atoi(id)
+
+	if err != nil{
+		return nil,httphandle.BadRequest("invalid id format")
+	}
+	
 	event,err := s.eventRepo.FetchEventById(eventId)
 
 	if err == sql.ErrNoRows{
 		return nil,httphandle.NotFound("id does not exist")
+	}else if err != nil{
+		return nil,err
 	}
 
 	return event,nil
@@ -70,8 +77,13 @@ func (s *eventService) UpdateEvent(name string,description string,id string) err
 		return httphandle.BadRequest("id is not a number")
 	}
 
-	eventId,_ := strconv.Atoi(id)
-	err := s.eventRepo.UpdateEventById(name,description,eventId)
+	eventId,err := strconv.Atoi(id)
+
+	if err != nil{
+		return httphandle.BadRequest("invalid id format")
+	}
+
+	err = s.eventRepo.UpdateEventById(name,description,eventId)
 
 	if err == sql.ErrNoRows{
 		return httphandle.NotFound("id does not exist")
@@ -91,9 +103,13 @@ func (s *eventService) DeleteEvent(id string) (error) {
 		return httphandle.BadRequest("id is not a number")
 	}
 
-	eventId,_ := strconv.Atoi(id)
+	eventId,err := strconv.Atoi(id)
 
-	err := s.eventRepo.DeleteEventById(eventId)
+	if err != nil{
+		return httphandle.BadRequest("invalid id format")
+	}
+
+	err = s.eventRepo.DeleteEventById(eventId)
 
 	if err != nil{
 		return httphandle.BadRequest(err.Error())

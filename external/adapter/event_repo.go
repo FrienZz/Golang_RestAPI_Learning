@@ -28,7 +28,7 @@ func (r *eventRepositoryDB) AddEvent(newEvent models.Event) (error){
 	return nil
 }
 
-func (r *eventRepositoryDB) FetchAllEvent() ([]models.Event,error){
+func (r *eventRepositoryDB) FetchAllEvents() ([]models.Event,error){
 	query := "SELECT * FROM events ORDER BY id ASC"
 	rows,err := r.db.Query(query)
 	if err != nil{

@@ -35,9 +35,9 @@ func (h *eventHandler) CreateEvent(c *gin.Context){
 	c.JSON(http.StatusCreated, gin.H{"message" : "Event has been successfully created!"})
 }
 
-func (h *eventHandler) GetAllEvent(c *gin.Context){
+func (h *eventHandler) GetAllEvents(c *gin.Context){
 
-	result,err := h.service.GetAllEvent()
+	result,err := h.service.GetAllEvents()
 
 	if err != nil{
 		HandleError(c,err)

@@ -18,7 +18,7 @@ func EventRoutes(db *sql.DB,server *gin.Engine){
 
 	protected := server.Group("/",middleware.Authentication)
 	
-	protected.GET("/events",event_httpHandler.GetAllEvent)
+	protected.GET("/events",event_httpHandler.GetAllEvents)
 	protected.GET("/events/:id", event_httpHandler.GetEvent)
 	protected.POST("/events",event_httpHandler.CreateEvent)
 	protected.PATCH("/events/:id",event_httpHandler.UpdateEvent)
