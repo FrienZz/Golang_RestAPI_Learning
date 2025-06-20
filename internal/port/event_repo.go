@@ -8,5 +8,5 @@ type EventRepository interface{
 	FetchAllEvents()  ([]models.Event,error)
 	FetchEventById(int) (*models.Event,error)
 	UpdateEventById(string,string,int,int) (error)
-	DeleteEventById(int)  (error)
+	DeleteEventById(int,int)  (error)
 }

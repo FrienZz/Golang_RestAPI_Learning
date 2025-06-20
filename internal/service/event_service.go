@@ -32,9 +32,10 @@ func (s *eventService) GetAllEvents() ([]models.Event, error) {
 
 	events,err := s.eventRepo.FetchAllEvents()
 
-	if err != nil{
+	switch {
+	case  err != nil:
 		return nil,err
-	}else if events == nil{
+	case events == nil:
 		return nil,httphandle.NotFound("Event not found")
 	}
 
@@ -51,12 +52,13 @@ func (s *eventService) GetEvent(id string) (*models.Event, error) {
 	
 	event,err := s.eventRepo.FetchEventById(eventId)
 
-	if err == sql.ErrNoRows{
+	switch {
+	case  err == sql.ErrNoRows:
 		return nil,httphandle.NotFound("Id does not exist")
-	}else if err != nil{
+	case err != nil:
 		return nil,err
 	}
-
+		
 	return event,nil
 }
 
@@ -83,7 +85,7 @@ func (s *eventService) UpdateEvent(name string,description string,id string,user
 	return nil
 }
 
-func (s *eventService) DeleteEvent(id string) (error) {
+func (s *eventService) DeleteEvent(id string,userId int) (error) {
 
 	eventId,err := strconv.Atoi(id)
 
@@ -91,10 +93,15 @@ func (s *eventService) DeleteEvent(id string) (error) {
 		return httphandle.BadRequest("Id is not a number")
 	}
 
-	err = s.eventRepo.DeleteEventById(eventId)
+	err = s.eventRepo.DeleteEventById(eventId,userId)
 
-	if err != nil{
-		return httphandle.BadRequest(err.Error())
+	switch{
+	case err == sql.ErrNoRows:
+		return httphandle.NotFound("Id does not exist")
+	case err != nil && err.Error() == "unauthorized access":
+		return httphandle.Unauthorized("Unauthorized Access")
+	case err != nil:
+		return err
 	}
 
 	return nil

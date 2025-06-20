@@ -14,5 +14,5 @@ func HandleError(c *gin.Context, err error) {
 		return
 	}
 
-	c.JSON(http.StatusInternalServerError, gin.H{"message" : err.Error()})
+	c.JSON(http.StatusInternalServerError, gin.H{"message" : "Unexpected error has occurred"})
 }

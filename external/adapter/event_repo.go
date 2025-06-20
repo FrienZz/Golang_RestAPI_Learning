@@ -82,19 +82,13 @@ func (r *eventRepositoryDB) UpdateEventById(name string,description string,event
 		updateData.Description = description
 	}
 	
-	result,err := r.db.Exec(stmt,updateData.Name,updateData.Description,eventId,userId)
+	_,err = r.db.Exec(stmt,updateData.Name,updateData.Description,eventId,userId)
 
 	if err != nil{
 		return err
 	}
 
-	rowAffected,err := result.RowsAffected()
-
-	if err != nil{
-		return err
-	}
-
-	if rowAffected == 0{
+	if updateData.User_id != userId{
 		return errors.New("unauthorized access")
 	}
 
@@ -102,22 +96,23 @@ func (r *eventRepositoryDB) UpdateEventById(name string,description string,event
 }
 
 
-func (r *eventRepositoryDB) DeleteEventById(id int) (error){
-	stmt := "DELETE FROM events WHERE id = $1"
-	result,err := r.db.Exec(stmt,id)
+func (r *eventRepositoryDB) DeleteEventById(id int,userId int) (error){
+
+	eventData,err := r.FetchEventById(id)
+
+	if err != nil{
+		return err
+	}
+
+	stmt := "DELETE FROM events WHERE id = $1 AND user_id =$2"
+	_,err = r.db.Exec(stmt,id,userId)
 
 	if err != nil{
 		return err
 	}
 	
-	rowAffected,err := result.RowsAffected()
-
-	if err != nil{
-		return err
-	}
-
-	if rowAffected == 0{
-		return errors.New("id does not exist")
+	if eventData.User_id != userId{
+		return errors.New("unauthorized access")
 	}
 
 	return nil

@@ -90,8 +90,15 @@ func (h *eventHandler) UpdateEvent(c *gin.Context){
 
 func (h *eventHandler) DeleteEvent(c *gin.Context){
 	id := c.Param("id")
+
+	userId,exists := c.Get("userId")
+
+	 if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized Access"})
+        return
+    }
 	
-	err := h.service.DeleteEvent(id)
+	err := h.service.DeleteEvent(id,userId.(int))
 
 	if err != nil{
 		HandleError(c,err)
