@@ -15,6 +15,21 @@ func NewUserRepositoryDB(db *sql.DB) port.UserRepository {
 	return &userRepositoryDB{db: db}
 }
 
+func (r *userRepositoryDB) GetUserId(email string) (*int,error) {
+
+	query := "SELECT id FROM users WHERE email=$1"
+	result := r.db.QueryRow(query,email)
+
+	var id int
+	err := result.Scan(&id)
+
+	if err != nil{
+		return nil,err
+	}
+
+	return &id,nil
+}
+
 func (r *userRepositoryDB) RegisterUser(email string,hashPassword string) error {
 
 	stmt := "INSERT INTO users(email,password) VALUES($1,$2)"

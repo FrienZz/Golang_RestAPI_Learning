@@ -71,7 +71,14 @@ func (h *eventHandler) UpdateEvent(c *gin.Context){
 		return
 	}
 	
-	err = h.service.UpdateEvent(updateEvent.Name,updateEvent.Description,id)
+	userId,exists := c.Get("userId")
+
+	 if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized Access"})
+        return
+    }
+
+	err = h.service.UpdateEvent(updateEvent.Name,updateEvent.Description,id,userId.(int))
 
 	if err != nil{
 		HandleError(c,err)

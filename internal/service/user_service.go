@@ -24,11 +24,11 @@ func (s *userService) RegisterUser(email string,password string) error {
 	isValid := emailRegex.MatchString(email)
 
 	if !isValid {
-		return httphandle.BadRequest("invalid email format")
+		return httphandle.BadRequest("Invalid email format")
 	}
 
 	if len(password) < 6{
-		return httphandle.BadRequest("password must be at least 6 characters") 
+		return httphandle.BadRequest("Password must be at least 6 characters") 
 	}
 
 	hashPassword,err := bcrypt.GenerateFromPassword([]byte(password),14)
@@ -40,7 +40,7 @@ func (s *userService) RegisterUser(email string,password string) error {
 	err = s.userRepo.RegisterUser(email,string(hashPassword))
 
 	if err != nil{
-		return httphandle.BadRequest("email already exist")
+		return httphandle.BadRequest("Email already exist")
 	}
 
 	return nil
@@ -60,10 +60,12 @@ func (s *userService) LoginUser(email string,password string) (string,error) {
 	err = bcrypt.CompareHashAndPassword([]byte(hashPassword),[]byte(password))
 
 	if err != nil{
-		return "",httphandle.NotFound("password is incorrect. Please try again")
+		return "",httphandle.Unauthorized("Password is incorrect. Please try again")
 	}
 
-	token,err := utils.GenerateToken(email)
+	userId,_ := s.userRepo.GetUserId(email)
+
+	token,err := utils.GenerateToken(email,*userId)
 
 	if err != nil{
 		return "",err

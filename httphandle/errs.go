@@ -24,3 +24,10 @@ func NotFound(msg string) error{
 		Message: msg,
 	}
 }
+
+func Unauthorized(msg string) error{
+	return ErrorResponse{
+		Code: http.StatusUnauthorized,
+		Message: msg,
+	}
+}

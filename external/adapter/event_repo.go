@@ -63,16 +63,16 @@ func (r *eventRepositoryDB) FetchEventById(id int) (*models.Event,error){
 	return &event,nil
 }
 
-func (r *eventRepositoryDB) UpdateEventById(name string,description string,id int) error{
+func (r *eventRepositoryDB) UpdateEventById(name string,description string,eventId int,userId int) error{
 
 
-	updateData,err := r.FetchEventById(id)
+	updateData,err := r.FetchEventById(eventId)
 
 	if err != nil{
 		return err
 	}
 
-	stmt := "UPDATE events SET name = $1,description = $2 WHERE id = $3"
+	stmt := "UPDATE events SET name = $1,description = $2 WHERE id = $3 AND user_id = $4"
 	
 	if name != ""{
 		updateData.Name = name
@@ -82,10 +82,20 @@ func (r *eventRepositoryDB) UpdateEventById(name string,description string,id in
 		updateData.Description = description
 	}
 	
-	_,err = r.db.Exec(stmt,updateData.Name,updateData.Description,id)
+	result,err := r.db.Exec(stmt,updateData.Name,updateData.Description,eventId,userId)
 
 	if err != nil{
 		return err
+	}
+
+	rowAffected,err := result.RowsAffected()
+
+	if err != nil{
+		return err
+	}
+
+	if rowAffected == 0{
+		return errors.New("unauthorized access")
 	}
 
 	return nil

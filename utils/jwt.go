@@ -10,8 +10,9 @@ import (
 
 var secretKey = []byte(os.Getenv("SECRET"))
 
-func GenerateToken(email string) (string,error) {
+func GenerateToken(email string,id int) (string,error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,jwt.MapClaims{
+		"user_id" : id,
 		"email": email,
 		"exp" : time.Now().Add(time.Hour*24).Unix(),
 		"iat" : time.Now().Unix(),
@@ -25,18 +26,24 @@ func GenerateToken(email string) (string,error) {
 	return tokenString,nil
 }
 
-func VerifyToken(tokenString string) error{
+func VerifyToken(tokenString string) (jwt.MapClaims,error){
 	token,err := jwt.Parse(tokenString,func(token *jwt.Token) (interface{},error){
 		return secretKey,nil
 	})
 
 	if err != nil{
-		return err
+		return nil,err
 	}
 
 	if !token.Valid{
-		return errors.New("invalid token")
+		return nil,errors.New("invalid token")
 	}
 
-	return nil
+	claims,ok := token.Claims.(jwt.MapClaims)
+
+	if !ok{
+		return nil,errors.New("cannot parse claims")
+	}	
+
+	return claims,nil
 }

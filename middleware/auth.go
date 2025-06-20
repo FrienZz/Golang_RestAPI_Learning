@@ -13,11 +13,20 @@ func Authentication(c *gin.Context)  {
 
 	token := strings.TrimPrefix(s,"Bearer")
 
-	err := utils.VerifyToken(token)
+	claims,err := utils.VerifyToken(token)
+
 	if err != nil{
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message" : "Unauthorized Access"})
 		return
 	}
 
+	userId,ok := claims["user_id"].(float64)
+
+	if !ok{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message" : "Unauthorized Access"})
+		return
+	}
+
+	c.Set("userId",int(userId))
 	c.Next()
 }

@@ -2,7 +2,6 @@ package service
 
 import (
 	"database/sql"
-	"regexp"
 	"strconv"
 
 	"github.com/FrienZz/Golang_RestAPI_Learning/httphandle"
@@ -23,7 +22,7 @@ func (s *eventService) CreateEvent(newEvent models.Event) error {
 	err := s.eventRepo.AddEvent(newEvent)
 
 	if err != nil{
-		return httphandle.BadRequest("event is already created")
+		return httphandle.BadRequest("Event is already created")
 	}
 
 	return nil
@@ -36,31 +35,24 @@ func (s *eventService) GetAllEvents() ([]models.Event, error) {
 	if err != nil{
 		return nil,err
 	}else if events == nil{
-		return nil,httphandle.NotFound("event not found")
+		return nil,httphandle.NotFound("Event not found")
 	}
 
 	return events,nil
 }
 
 func (s *eventService) GetEvent(id string) (*models.Event, error) {
-
-	numberRegex := regexp.MustCompile(`^[0-9]*$`)
-	isNumber := numberRegex.MatchString(id)
-
-	if !isNumber {
-		return nil,httphandle.BadRequest("id is not a number")
-	}
 	
 	eventId,err := strconv.Atoi(id)
 
 	if err != nil{
-		return nil,httphandle.BadRequest("invalid id format")
+		return nil,httphandle.BadRequest("Id is not a number")
 	}
 	
 	event,err := s.eventRepo.FetchEventById(eventId)
 
 	if err == sql.ErrNoRows{
-		return nil,httphandle.NotFound("id does not exist")
+		return nil,httphandle.NotFound("Id does not exist")
 	}else if err != nil{
 		return nil,err
 	}
@@ -68,45 +60,35 @@ func (s *eventService) GetEvent(id string) (*models.Event, error) {
 	return event,nil
 }
 
-func (s *eventService) UpdateEvent(name string,description string,id string) error {
-
-	numberRegex := regexp.MustCompile(`^[0-9]*$`)
-	isNumber := numberRegex.MatchString(id)
-
-	if !isNumber {
-		return httphandle.BadRequest("id is not a number")
-	}
+func (s *eventService) UpdateEvent(name string,description string,id string,userId int) error {
 
 	eventId,err := strconv.Atoi(id)
 
 	if err != nil{
-		return httphandle.BadRequest("invalid id format")
+		return httphandle.BadRequest("Id is not a number")
 	}
 
-	err = s.eventRepo.UpdateEventById(name,description,eventId)
+	err = s.eventRepo.UpdateEventById(name,description,eventId,userId)
 
-	if err == sql.ErrNoRows{
-		return httphandle.NotFound("id does not exist")
-	}else if err != nil{
+	switch{
+	case err == sql.ErrNoRows:
+		return httphandle.NotFound("Id does not exist")
+	case err != nil && err.Error() == "unauthorized access":
+		return httphandle.Unauthorized("Unauthorized Access")
+	case err != nil:
 		return err
 	}
+	
 
 	return nil
 }
 
 func (s *eventService) DeleteEvent(id string) (error) {
 
-	numberRegex := regexp.MustCompile(`^[0-9]*$`)
-	isNumber := numberRegex.MatchString(id)
-
-	if !isNumber {
-		return httphandle.BadRequest("id is not a number")
-	}
-
 	eventId,err := strconv.Atoi(id)
 
 	if err != nil{
-		return httphandle.BadRequest("invalid id format")
+		return httphandle.BadRequest("Id is not a number")
 	}
 
 	err = s.eventRepo.DeleteEventById(eventId)
