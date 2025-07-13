@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"regexp"
 
 	"github.com/FrienZz/Golang_RestAPI_Learning/httphandle"
@@ -49,11 +50,12 @@ func (s *userService) RegisterUser(email string,password string) error {
 
 func (s *userService) LoginUser(email string,password string) (string,error) {
 
-
 	hashPassword,err := s.userRepo.LoginUser(email,password)
 
-	if err != nil{
-
+	switch {
+	case  err == sql.ErrNoRows:
+		return "",httphandle.NotFound("Email does not exist")
+	case err != nil:
 		return "",err
 	}
 

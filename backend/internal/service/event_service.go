@@ -17,9 +17,9 @@ func NewEventService(eventRepo port.EventRepository) port.EventService{
 	return &eventService{eventRepo: eventRepo}
 }
 
-func (s *eventService) CreateEvent(newEvent models.Event) error {
+func (s *eventService) CreateEvent(newEvent models.Event,userId int) error {
 
-	err := s.eventRepo.AddEvent(newEvent)
+	err := s.eventRepo.AddEvent(newEvent,userId)
 
 	if err != nil{
 		return httphandle.BadRequest("Event is already created")

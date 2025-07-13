@@ -17,9 +17,9 @@ func NewEventRepositoryDB(db *sql.DB) port.EventRepository{
 	return &eventRepositoryDB{db : db}
 }
 
-func (r *eventRepositoryDB) AddEvent(newEvent models.Event) (error){
+func (r *eventRepositoryDB) AddEvent(newEvent models.Event,userId int) (error){
 	stmt := "INSERT INTO events(name,description,user_id) VALUES($1,$2,$3)"
-	_,err := r.db.Exec(stmt,newEvent.Name,newEvent.Description,newEvent.User_id)
+	_,err := r.db.Exec(stmt,newEvent.Name,newEvent.Description,userId)
 
 	if err != nil{
 		return err
