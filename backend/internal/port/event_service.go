@@ -8,6 +8,6 @@ type EventService interface {
 	CreateEvent(models.Event,int) error
 	GetAllEvents() ([]models.Event, error)
 	GetEvent(string) (*models.Event, error)
-	UpdateEvent(string,string,string,int) error 
+	UpdateEvent(models.Event,string,int) error 
 	DeleteEvent(string,int) error
 }

@@ -18,8 +18,8 @@ func NewEventRepositoryDB(db *sql.DB) port.EventRepository{
 }
 
 func (r *eventRepositoryDB) AddEvent(newEvent models.Event,userId int) (error){
-	stmt := "INSERT INTO events(title,description,user_id) VALUES($1,$2,$3)"
-	_,err := r.db.Exec(stmt,newEvent.Title,newEvent.Description,userId)
+	stmt := "INSERT INTO events(title,description,image_url,event_date,location,user_id) VALUES($1,$2,$3,$4,$5,$6)"
+	_,err := r.db.Exec(stmt,newEvent.Title,newEvent.Description,newEvent.ImageUrl,newEvent.EventDate,newEvent.Location,userId)
 
 	if err != nil{
 		return err
@@ -38,7 +38,7 @@ func (r *eventRepositoryDB) FetchAllEvents() ([]models.Event,error){
 	var events []models.Event
 	for rows.Next() {
 		var event models.Event 
-		err = rows.Scan(&event.Event_id,&event.Title,&event.Description,&event.Created_at,&event.User_id)
+		err = rows.Scan(&event.Event_id,&event.Title,&event.Description,&event.Created_at,&event.User_id,&event.ImageUrl,&event.EventDate,&event.Location)
 	
 		if err != nil{
 			return nil,err
@@ -55,7 +55,7 @@ func (r *eventRepositoryDB) FetchEventById(id int) (*models.Event,error){
 	row := r.db.QueryRow(query,id)
 
 	var event models.Event 
-	err := row.Scan(&event.Event_id,&event.Title,&event.Description,&event.Created_at,&event.User_id)
+	err := row.Scan(&event.Event_id,&event.Title,&event.Description,&event.Created_at,&event.User_id,&event.ImageUrl,&event.EventDate,&event.Location)
 	if err != nil {
 		return nil,err
 	}
@@ -63,7 +63,7 @@ func (r *eventRepositoryDB) FetchEventById(id int) (*models.Event,error){
 	return &event,nil
 }
 
-func (r *eventRepositoryDB) UpdateEventById(title string,description string,eventId int,userId int) error{
+func (r *eventRepositoryDB) UpdateEventById(updateEvent models.Event,eventId int,userId int) error{
 
 
 	updateData,err := r.FetchEventById(eventId)
@@ -72,17 +72,29 @@ func (r *eventRepositoryDB) UpdateEventById(title string,description string,even
 		return err
 	}
 
-	stmt := "UPDATE events SET title = $1,description = $2 WHERE id = $3 AND user_id = $4"
+	stmt := "UPDATE events SET title = $1,description = $2,image_url = $3,event_date = $4,location = $5 WHERE id = $6 AND user_id = $7"
 	
-	if title != ""{
-		updateData.Title = title
+	if updateEvent.Title != ""{
+		updateData.Title = updateEvent.Title
 	}
 
-	if description != ""{
-		updateData.Description = description
+	if updateEvent.Description != ""{
+		updateData.Description = updateEvent.Description
 	}
-	
-	_,err = r.db.Exec(stmt,updateData.Title,updateData.Description,eventId,userId)
+
+	if updateEvent.ImageUrl != ""{
+		updateData.ImageUrl = updateEvent.ImageUrl
+	}
+
+	if updateEvent.EventDate.IsZero(){
+		updateData.ImageUrl = updateEvent.ImageUrl
+	}
+
+	if updateEvent.Location != ""{
+		updateData.Location = updateEvent.Location
+	}
+
+	_,err = r.db.Exec(stmt,updateData.Title,updateData.Description,updateData.ImageUrl,updateData.EventDate,updateData.Location,eventId,userId)
 
 	if err != nil{
 		return err

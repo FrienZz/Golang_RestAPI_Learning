@@ -31,7 +31,6 @@ func (h *eventHandler) CreateEvent(c *gin.Context){
         c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized Access"})
         return
     }
-
 	err = h.service.CreateEvent(newEvent,userId.(int))
 
 	if err != nil{
@@ -85,7 +84,7 @@ func (h *eventHandler) UpdateEvent(c *gin.Context){
         return
     }
 
-	err = h.service.UpdateEvent(updateEvent.Title,updateEvent.Description,id,userId.(int))
+	err = h.service.UpdateEvent(updateEvent,id,userId.(int))
 
 	if err != nil{
 		HandleError(c,err)
