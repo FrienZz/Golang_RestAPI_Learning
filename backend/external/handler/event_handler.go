@@ -85,7 +85,7 @@ func (h *eventHandler) UpdateEvent(c *gin.Context){
         return
     }
 
-	err = h.service.UpdateEvent(updateEvent.Name,updateEvent.Description,id,userId.(int))
+	err = h.service.UpdateEvent(updateEvent.Title,updateEvent.Description,id,userId.(int))
 
 	if err != nil{
 		HandleError(c,err)

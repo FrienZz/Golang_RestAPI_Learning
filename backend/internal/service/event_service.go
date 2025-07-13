@@ -62,7 +62,7 @@ func (s *eventService) GetEvent(id string) (*models.Event, error) {
 	return event,nil
 }
 
-func (s *eventService) UpdateEvent(name string,description string,id string,userId int) error {
+func (s *eventService) UpdateEvent(title string,description string,id string,userId int) error {
 
 	eventId,err := strconv.Atoi(id)
 
@@ -70,7 +70,7 @@ func (s *eventService) UpdateEvent(name string,description string,id string,user
 		return httphandle.BadRequest("Id is not a number")
 	}
 
-	err = s.eventRepo.UpdateEventById(name,description,eventId,userId)
+	err = s.eventRepo.UpdateEventById(title,description,eventId,userId)
 
 	switch{
 	case err == sql.ErrNoRows:
